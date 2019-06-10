@@ -1,0 +1,66 @@
+{VERSION 2 3 "IBM INTEL NT" "2.3" }
+{USTYLETAB {CSTYLE "Maple Input" -1 0 "Courier" 0 1 255 0 0 1 0 1 0 0 
+1 0 0 0 0 }{CSTYLE "2D Math" -1 2 "Times" 0 1 0 0 0 0 0 0 2 0 0 0 0 0 
+0 }{CSTYLE "2D Output" 2 20 "" 0 1 0 0 255 1 0 0 0 0 0 0 0 0 0 }
+{PSTYLE "Normal" -1 0 1 {CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 0 0 0 0 0 0 
+0 0 }0 0 0 -1 -1 -1 0 0 0 0 0 0 -1 0 }{PSTYLE "Maple Output" 0 11 1 
+{CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 }3 3 0 -1 -1 -1 0 0 
+0 0 0 0 -1 0 }{PSTYLE "" 0 256 1 {CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 1 
+0 0 0 0 0 0 0 }0 0 0 -1 -1 -1 0 0 0 0 0 0 -1 0 }}
+{SECT 0 {EXCHG {PARA 256 "> " 0 "" {MPLTEXT 1 0 1127 "#Creation d'une \+
+variable aleatoire non uniforme pour avoir plus de proba de piocher un
+ point au centre de la courbe gaussienne\naleatoire_non_uniforme_v2:=p
+roc(points,poids)\nlocal cible,total_en_cours,indice_en_cours,element_
+aleat,tot_poids,tireur_aleat,poids_v2,i,poids_norm;\n#somme de poids p
+our les points\ntot_poids:=sum('poids[i]','i'=1..nops(poids));\n#poids
+ normalise par Gauss\npoids_norm:=[seq(tot_poids-poids[i],i=1..nops(po
+ids))];\n#nouvelle somme des poids normalises\ntot_poids:=sum('poids_n
+orm[i]','i'=1..nops(poids_norm));\n\n#tirage d un poids aleatoire\ntir
+eur_aleat:=rand(1..floor(tot_poids));\ncible:=tireur_aleat();\ntotal_e
+n_cours:=poids_norm[1]; \nindice_en_cours:=2;\n#tant que poids total d
+es points est inferieur au tirage aleatoire afin de prendre une valeur
+ proche du centre de la gaussienne\nwhile total_en_cours < cible do\n \+
+  total_en_cours:=total_en_cours+poids_norm[indice_en_cours];\n   if(i
+ndice_en_cours > nops(poids_norm)) then\n      break;\n   fi;\n   indi
+ce_en_cours:=indice_en_cours+1;\nod; \n#on retourne le point correspon
+dant \340 l indice obtenu\nelement_aleat:=points[indice_en_cours-1];\n
+element_aleat;\nend:" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 278 "#F
+onctions a optimiser\nHimmelblau:=proc(x,y)\n    local f;\n    f:=((x^
+2)+y-11)^2+(x+(y^2)-7)^2;\nend:\nRastrigin:=proc(x,y)\n    local f;\n \+
+   f:=evalf(20+((x^2)-10*cos(2*Pi*x))+((y^2)-10*cos(2*Pi*y)));\nend:\n
+Rosenbrock:=proc(x,y)\n    local f;\n    f:=((1-x)^2)+100*((y-(x^2))^2
+);\nend:" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 1580 "#creation de \+
+3 valeurs x,y,z randoms pour une fonction d optimisation\nGenR:=rand(-
+2000..2000)/1000;\npoint_random:=proc(function_a_opt)\n   local point;
+  \n   point:=[GenR(),GenR(),0];\n   point[3]:=function_a_opt(point[1]
+,point[2]);\n   evalf(point,8);\nend:\n\n#BOUCLE PRINCIPALE\nfourmi:= \+
+proc(function_a_opt,n_iteration,N)\n   local i,points,p1,p2,p3,lambda,
+compteur, poids, init;\n   #generation de ces 3 valeurs randoms N fois
+\n   init:=[seq(point_random(function_a_opt),i=1..N)];\n   #classement
+ par ordre croissant des 3 valeurs selon la valeur z \n   init:=sort(i
+nit,(indiv1,indiv2)-> evalb(indiv1[3]<indiv2[3]));\n\n   compteur:=0;
+\n   while (compteur<n_iteration) do\n      #extraction des deux premi
+eres valeurs x,y correspondants aux points \n      points:=[seq([op(1.
+.2,init[i])],i=1..nops(init))];\n      #extraction de la troisieme val
+eur z correspondant au poids \n      poids:=[seq(init[i][3],i=1..nops(
+init))];\n      #choix de deux points aleatoires\n      p1:=aleatoire_
+non_uniforme_v2(points,poids);\n      p2:=aleatoire_non_uniforme_v2(po
+ints,poids);\n      #calcul du poids situe aleatoirement entre p1 et p
+2\n      lambda:=evalf(rand(0..10000)()/10000);\n      p3:=p1+lambda*p
+2;\n      p3:=[op(p3),function_a_opt(p3[1],p3[2])];\n      #creation d
+ une nouvelle liste avec le nouveau poids du point p3 en z\n      init
+:=[op(init),p3];\n      init:=sort(init,(indiv1,indiv2)-> evalb(indiv1
+[3]<indiv2[3]));\n      init:=[op(1..N,init)];\n      #Pour voir l evo
+lution des etapes de calcul, decommenter ci dessous\n      #print(op(1
+..4,init));\n      compteur:=compteur+1;\n   od:\n   init[1];\nend:" }
+}{PARA 11 "" 1 "" {XPPMATH 20 "6#>%%GenRG,$:6\"6#%\"tGF'F'C%>%&_seedG-
+%%iremG6$,$F,\"-\"3p'>uU\"-*)**********>8$F,,&-F.6$F4\"%,S\"\"\"!%+?F9
+F'6#F,#F9\"%+5" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 26 "fourmi(Hi
+mmelblau,600,15);" }}{PARA 11 "" 1 "" {XPPMATH 20 "6#7%$\"++?%\\.$!\"*
+$\"+R&f_F#F&$\"+Jzl/<F&" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 26 "
+fourmi(Rosenbrock,600,15);" }}{PARA 11 "" 1 "" {XPPMATH 20 "6#7%$\"+,y
+#G))*!#5$\"+m$y%p(*F&$\"+!>\\HV\"!#8" }}}{EXCHG {PARA 0 "> " 0 "" 
+{MPLTEXT 1 0 25 "fourmi(Rastrigin,600,15);" }}{PARA 11 "" 1 "" 
+{XPPMATH 20 "6#7%$\"*a')RO(!#6$\"+BS*ox&F&$\"*x)Rcm!\"*" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}}{MARK "0 0 0" 1070 }{VIEWOPTS 
+1 1 0 1 1 1803 }

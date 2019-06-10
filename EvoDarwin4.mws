@@ -1,0 +1,72 @@
+{VERSION 2 3 "IBM INTEL NT" "2.3" }
+{USTYLETAB {CSTYLE "Maple Input" -1 0 "Courier" 0 1 255 0 0 1 0 1 0 0 
+1 0 0 0 0 }{CSTYLE "2D Math" -1 2 "Times" 0 1 0 0 0 0 0 0 2 0 0 0 0 0 
+0 }{CSTYLE "2D Output" 2 20 "" 0 1 0 0 255 1 0 0 0 0 0 0 0 0 0 }
+{PSTYLE "Normal" -1 0 1 {CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 0 0 0 0 0 0 
+0 0 }0 0 0 -1 -1 -1 0 0 0 0 0 0 -1 0 }{PSTYLE "Maple Output" 0 11 1 
+{CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 }3 3 0 -1 -1 -1 0 0 
+0 0 0 0 -1 0 }{PSTYLE "" 11 12 1 {CSTYLE "" -1 -1 "" 0 1 0 0 0 0 0 0 
+0 0 0 0 0 0 0 }1 0 0 -1 -1 -1 0 0 0 0 0 0 -1 0 }}
+{SECT 0 {EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 75 "Rosenbrock:=proc(x,y
+)\n    local f;\n    f:=((1-x)^2)+100*((y-(x^2))^2);\nend:" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 76 "Himmelblau:=proc(x,y)\n    local f;
+\n    f:=((x^2)+y-11)^2+(x+(y^2)-7)^2;\nend:" }}}{EXCHG {PARA 0 "> " 
+0 "" {MPLTEXT 1 0 102 "Rastrigin:=proc(x,y)\n    local f;\n    f:=eval
+f(20+((x^2)-10*cos(2*Pi*x))+((y^2)-10*cos(2*Pi*y)));\nend:" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 2643 "Darwin:=proc(fonction_a_optimiser
+)\n\nlocal N, Nb_enf, GenR, Croisement, new_list, i, x, y, z, parents,
+ indiv1, indiv2, indiv3, indiv4, k, j, pere, mere, p1, p2, puissance_p
+1, puissance_p2, m1, m2, puissance_m1, puissance_m2, a, b, c, d, X_enf
+, Y_enf, Z_enf;\n\n# N, nombre d'individus parents initiaux\nN:=250;\n
+Nb_enf:=100;\n#Avant 10 croisements, les resultats sont pas tres preci
+s, on arrive aux points (1,1) a partir de 10\nCroisement:=40;\nGenR:=r
+and(-6000..6000)/1000;\n\n#cr\351ation de listes pas encores remplies
+\nparents:=[NULL,NULL,NULL];\nnew_list:=[NULL,NULL,NULL];\n\n#Rempliss
+age de ces listes avec notion d'aleatoirite introduite par Rosenbrk\nw
+hile nops(parents) < N do\n for i from 1 to N do\n    x:=evalf(GenR(),
+3);\n    y:=evalf(GenR(),3);\n    z:=fonction_a_optimiser(x,y); \n par
+ents:=[op(parents),[x,y,z]];\n od;\nod;\nparents:=sort(parents,(indiv1
+,indiv2)-> evalb(indiv1[3]<indiv2[3]));\n\n###BOUCLE PRINCIPALE: CROIS
+EMENTS###\n#Boucle A de croisements\nfor k from 1 to Croisement do\n#B
+oucle B de g\351n\351rations d'enfants\n  for j from 1 to Nb_enf do\n
+\n#Selection de deux peres\n    p1:=rand(1..25);\n    puissance_p1:=p1
+();\n    p2:=rand(1..25);\n    puissance_p2:=p2();\n    \n#On prends l
+e meilleur\n    if parents[puissance_p1][3]<parents[puissance_p2][3] t
+hen\n        pere:=puissance_p1;\n else \n        pere:=puissance_p2;
+\n    fi;\n\n#On le met dans la liste des peres balezes    new_list:=[
+op(new_list),[parents[pere][1],parents[pere][2],parents[pere][3]]];\n
+\n#Selection de deux meres\n    m1:=rand(1..25);\n    puissance_m1:=m1
+();\n    m2:=rand(1..25);\n    puissance_m2:=m2();\n\n#On prends la me
+illeure\nif puissance_m1<puissance_m2 then\n        mere:=puissance_m1
+;\n    else \n        mere:=puissance_m2;\n    fi;\n\n#On la met dans \+
+la liste des meres balezes     new_list:=[op(new_list),[parents[mere][
+1],parents[mere][2],parents[mere][3]]];\n\n#G\351n\351ration d'un enfa
+nt par deux parents balezes qui sont ensuites retires de la liste init
+iale    \n    a:=parents[pere][1];\n    b:=parents[mere][1];\n    X_en
+f:=evalf((a+b)/2,8);\n\n    c:=parents[pere][2];\n    d:=parents[mere]
+[2];\n    Y_enf:=evalf((c+d)/2,8);\n\n#Nouvelle liste d'enfants (avec \+
+un enfant aleat) qui vont devenir la nouvelle liste de parents\n    su
+bsop(puissance_p1=NULL,puissance_p2=NULL,parents);\n    subsop(puissan
+ce_m1=NULL,puissance_m2=NULL,parents);\n    Z_enf:=evalf(fonction_a_op
+timiser(X_enf,Y_enf),8); \n    new_list:=[op(new_list),[X_enf,Y_enf,Z_
+enf]];\nod;\n#Fin de la Boucle B de g\351n\351rations d'enfants\n\nnew
+_list:=sort(new_list,(indiv3,indiv4)->evalb(indiv3[3]<=indiv4[3]));\np
+arents:=[NULL,NULL,NULL];\nparents:=new_list;\nnew_list:=[NULL,NULL,NU
+LL];\nparents;\nod;\n#Fin de la Boucle A de croisements\nend:" }}}
+{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 18 "Darwin(Rastrigin);" }}{PARA 
+0 "> " 0 "" {MPLTEXT 1 0 0 "" }}{PARA 12 "" 1 "" {XPPMATH 20 "6#7`q7%$
+!)+vVT!\"*$\")](o\\$F'$\"($p.e!\"(F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 19 "D
+arwin(Rosenbrock);" }}{PARA 12 "" 1 "" {XPPMATH 20 "6#7`q7%$\")wo4%*!
+\")$\")++q))F'$\")%HOt$!#5F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 19 "Darwin(Hi
+mmelblau);" }}{PARA 12 "" 1 "" {XPPMATH 20 "6#7`q7%$\")](=b$!\"($!)]7=
+;F'$\")cn&)o!\")F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$F$
+F$F$" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}}{MARK "7 0 0" 
+0 }{VIEWOPTS 1 1 0 1 1 1803 }
